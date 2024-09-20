@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مهامي</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+</head>
+
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #2f2d58;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    
+    .container {
+        background-color: #f4f4f9;
+        width: 80%;
+        max-width: 900px;
+        border-radius: 10px;
+        padding: 20px;
+    }
+    
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #5a3e92;
+        color: white;
+        padding: 15px;
+        border-radius: 8px;
+    }
+    
+    .add-button {
+        background-color: #ddd;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+    
+    .task {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f4f4f9;
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+    }
+    
+    .icons {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .blue {
+        background-color: #5bc0de;
+    }
+    
+    .green {
+        background-color: #5cb85c;
+    }
+    
+    .red {
+        background-color: #d9534f;
+    }
+    
+    .task-details p {
+        font-size: 18px;
+    }
+    
+    .task-details span {
+        color: #aaa;
+    }
+
+
+.done{
+    background-color: chartreuse    ;
+}
+
+</style> 
+
+
+
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 style="text-align: center;">مهامي</h1>
+            <button id="button" class="add-button">+</button>
+        </header>
+
+        <div id="tasks">
+            <!-- <div class="task"> 
+                <div class="icons">
+                    <div class="icon blue">E</div>
+                    <div class="icon green">C</div>
+                    <div class="icon red">D</div>
+                </div>
+                <div id="task-details">
+                    <p>قراءة كتاب</p>
+                    <span>10/10/2030</span>
+                </div>
+            </div>
+            كرر الكود السابق لكل مهمة 
+            <div class="task">
+                <div class="icons">
+                    <div class="icon blue">E</div>
+                    <div class="icon green">C</div>
+                    <div class="icon red">D</div>
+                </div>
+                <div class="task-details">
+                    <p>قراءة كتاب</p>
+                    <span>10/10/2030</span>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</body>
+
+
+<script>
+let storedTasks = localStorage.getItem("tasks")
+    if(storedTasks){
+        tasks=JSON.parse(storedTasks)
+    }
+        else{
+            let tasks=[
+            {
+            "title":"قراءه كتاب",
+            "date":"11/10/2003",
+            "isdone":false
+        },
+
+        {
+            "title":"لعب كوره قدم",
+            "date":"12/10/2003",
+            "isdone":true
+        },
+        
+        {
+            "title":"خطوبه",
+            "date":"11/10/2025",
+            "isdone":false
+        },
+        
+        {
+            "title":"جواز",
+            "date":"11/10/2026",
+            "isdone":true
+        }
+        ]
+    }
+    
+    // tasks=JSON.parse(localStorage.getItem("tasks",tasks))
+
+function updateDom(){ 
+    document.getElementById("tasks").innerHTML=""
+    let index=0
+    for(var task of tasks){
+        let content=
+    `
+        <div class="task ${task.isdone ? 'done':''} ">
+            <div class="icons">
+                <div onclick="EditIcon(${index})"  class="icon blue">&#9998</div>
+                ${task.isdone ? `
+                    <div style="background-color: rgb(255, 42, 0)"
+                        onclick="   correctIcon(${index})" class="icon green">X
+                    </div>
+                `
+                :`
+                <div onclick="correctIcon(${index})" class="icon green">
+                    &#10003
+                </div>`
+                }
+                
+                <div  onclick="deleteIcon(${index})" class="icon red">&#128465</div>
+            </div>
+            <div id="task-details">
+                <p>${task.title}</p>
+                <span>${task.date}</span>
+            </div> 
+        </div>
+    `
+        
+    document.getElementById("tasks").innerHTML+=content
+    index++
+    }
+}
+updateDom()
+
+
+
+//=======BUTTON ICON============
+
+
+document.getElementById("button").addEventListener("click",function(){
+    let now= new Date()
+    let taskName = prompt(" please enter your title")
+    let date=prompt("please enter your date")
+    let taskObj={
+        "title":taskName,
+        "date": date,
+        "isdone" :false
+    }
+    tasks.push(taskObj)
+
+    storgeFunction()
+            
+    
+    updateDom()
+})
+
+//=======DELETE ICON=======
+
+function deleteIcon(index){
+    let task=tasks[index]
+    let contentCofirm=confirm(`هل انت متأكد من حذف مهمة : ${task.title}`)
+        if(contentCofirm==true){
+    tasks.splice(index,1)//بتحذف عنصر 
+    updateDom()
+    storgeFunction()
+}
+}
+
+
+//========CORRECT ICON======
+function correctIcon(index){
+    let task=tasks[index]
+    if(task.isdone==true){
+        task.isdone=false
+    }
+    else{
+        task.isdone=true
+    }
+    storgeFunction()
+    
+    updateDom()
+}
+
+// حل اخر لو هستخدم داله اضافيه لتحويل isdone الى false
+//function UncorrectIcon(index){
+//    let task=tasks[index]
+//    task.isdone=false
+//    updateDom()
+//}
+
+//=======EDIT ICON=============
+function EditIcon(index){
+    let task =tasks[index]
+    let editName=prompt("اعد ادخال الاسم",task.title)
+    let editDate=prompt("اعد ادخال التاريخ",task.date)
+
+    if(editName){
+        task.title=editName
+    }
+
+    if(editDate){
+        task.date=editDate
+    }
+    updateDom()
+    storgeFunction()
+    }
+
+
+
+
+    //===============STORGE FUNCTION==============
+
+    function storgeFunction(){
+        let tasksString= JSON.stringify(tasks)
+localStorage.setItem("tasks",tasksString)
+    }
+
+
+
+
+</script>
+</html>
